@@ -258,10 +258,11 @@ cout << "Time elapsed Client Total = " << elapsed*1000 << "ms"<< endl;
 //cout << "Vector result = " << endl;
 vector<double> resultVector(6);
 for(int i = 0 ; i < 6 ; i++){
-if(i < 3)
+if(i < 2) //update this to 6 incase of all axis
 resultVector[i] = resultArray[i]; // Scaling from [mm] to [m]
 else
-resultVector[i] = resultArray[i]; 
+//resultVector[i] = resultArray[i];
+resultVector[i] = 0; 
 //cout << "====" << endl;
 //cout <<  resultArray[i] << endl;
 //cout <<  resultVector[i] << endl;
@@ -439,7 +440,7 @@ int main()
   vpMatrix Lx ;
 
   vpColVector v ;
-  double lambda = 0 ;
+  double lambda = 0.1 ;
   int iter = 0 ;
   while (1) //fabs(e.sumSquare()) > 1e-8)
   {
@@ -470,12 +471,14 @@ int main()
     // the two previous line should be be replace by something like
     vpPoseVector cdrc ;
     cdrc.buildFrom(cdTc) ;
-    cout << "GT       " << cdrc.t() ;
+     
+    
+    cout << "\nfrom GT: \t" << cdrc.t() ;
     cdrc = getDirectionFromCNN(I) ;                              // ------------------------------------------> 1 
     
     
 
-    cout << "from CNN " << cdrc.t() ;
+    cout << "\nfrom CNN:\t" << cdrc.t() ;
     cdTc.buildFrom(cdrc) ;
 
     // Calcul de l'erreur
