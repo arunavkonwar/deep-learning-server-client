@@ -10,11 +10,10 @@ def vgg16():
 	import matplotlib.pyplot as plt
 	from keras.utils import plot_model 
 
-
+	
 	vgg16_model = keras.applications.vgg16.VGG16()
 
 	#vgg16_model.summary()
-
 
 	model = Sequential()
 	for layer in vgg16_model.layers:
@@ -28,15 +27,40 @@ def vgg16():
 		layer.trainable = True
 	
 	return model
+	
+	
+	
+	#MOBILE NET
+	'''
+	vgg16_model = keras.applications.mobilenet.MobileNet(input_shape=None, alpha=1.0, depth_multiplier=1, dropout=1e-3, include_top=True, weights='imagenet', input_tensor=None, pooling=None, classes=1000)
 
+	model = Sequential()
+	for layer in vgg16_model.layers:
+		model.add(layer)
+	
+	model.layers.pop()
+	#model.layers.pop()
+	#model.layers.pop()
 
+	model.add(Dense(2, activation=None))
+	
+	for layer in model.layers:
+		layer.trainable = True
+
+	#model.add(Dense(2, activation='linear'))
+	print "length of network"
+	print len(model.layers)
+	model.summary()
+	return model
+	
+	'''
 def initializeNetwork():
 	from keras.models import load_model
 	import h5py
 
 	#initialize_model = load_model('trained_model.h5')
 	initialize_model = vgg16()
-	initialize_model.load_weights('trained_model_weights_dense_trainable_sgd_pose1-20.h5')
+	initialize_model.load_weights('trained_model_sgd_valid_40k_1-60.h5')
 	return initialize_model
 
 	

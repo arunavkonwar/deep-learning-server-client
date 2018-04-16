@@ -253,7 +253,7 @@ cout << "Receiving com time = " << elapsedReceive*1000 << "ms" << endl;
 cout << "Debug time (int read) = " << elapsedDebug*1000 << "ms" << endl;
 cout << "Debug2 time (array read) = " << elapsedDebug2*1000 << "ms" << endl;
 cout << "Debug3 time (opening pipe) = " << elapsedDebug3*1000 << "ms" << endl;*/
-cout << "Time elapsed Client Total = " << elapsed*1000 << "ms"<< endl;  
+cout << "  Time elapsed Client Total = " << elapsed*1000 << "ms";  
 
 //cout << "Vector result = " << endl;
 vector<double> resultVector(6);
@@ -281,7 +281,7 @@ vpPoseVector getDirectionFromCNN(vpImage<unsigned char> &im){
 
   result = queryServer(input);
   // Return this pose estimate
-  for (int i=0 ; i <6 ; i++) cout<<" "<<result[i] ;
+  //for (int i=0 ; i <6 ; i++) cout<<" "<<result[i] ;
   
   vpPoseVector r ;
   for (int i=0 ; i <6 ; i++) r[i] = result[i] ;
@@ -442,7 +442,8 @@ int main()
   vpColVector v ;
   double lambda = 0.1 ;
   int iter = 0 ;
-  while (1) //fabs(e.sumSquare()) > 1e-8)
+  //while (1) //fabs(e.sumSquare()) > 1e-8)
+  while(fabs(e.sumSquare()) > 1e-5)
   {
 
     sim.setCameraPosition(cTw);
@@ -471,7 +472,9 @@ int main()
     // the two previous line should be be replace by something like
     vpPoseVector cdrc ;
     cdrc.buildFrom(cdTc) ;
-     
+    
+    vpColVector gt ;
+    gt = cdrc ;
     
     cout << "\nfrom GT: \t" << cdrc.t() ;
     cdrc = getDirectionFromCNN(I) ;                              // ------------------------------------------> 1 
@@ -494,12 +497,18 @@ int main()
     // Mis à jour de la position de la camera
     cTw = vpExponentialMap::direct(v).inverse()* cTw ;
 
-    cout << "\niter "<< iter <<" : "<< e.t() << endl ;
+    cout << "\n\niter "<< iter <<" : "<< e.t() << endl ;
 
     iter++ ;
 
+e[2] =gt[0] ; 
+e[3] = gt[1] ;
+
+
     //mis a jour de courbes
     vpPoseVector crw(cTw) ;
+    crw[2] = 0 ;
+    
     plot.plot(0,0,iter, e.sumSquare()) ;
     plot.plot(1,iter, e) ;
     plot.plot(2,iter, v) ;
