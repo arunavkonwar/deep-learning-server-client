@@ -9,58 +9,50 @@ def vgg16():
 	from keras.layers.convolutional import *
 	import matplotlib.pyplot as plt
 	from keras.utils import plot_model 
+	from keras.applications import VGG16
+	from keras import models
+	from keras import layers
 
-	
-	vgg16_model = keras.applications.vgg16.VGG16()
 
-	#vgg16_model.summary()
+	#vgg16_model = keras.applications.vgg16.VGG16(include_top=True, weights='imagenet', input_tensor=None, input_shape=None, pooling=None, classes=1000)
+	conv_base = VGG16(weights='imagenet',
+                  include_top=False,
+                  input_shape=(224, 224, 3))
 
-	model = Sequential()
-	for layer in vgg16_model.layers:
-		model.add(layer)
+	model = models.Sequential()
+	model.add(conv_base)
+	model.add(layers.Flatten())
+	model.add(layers.Dense(4096, activation='relu'))
+	model.add(layers.Dense(4096, activation='relu'))
+	model.add(layers.Dense(2, activation=None))
 	
-	model.layers.pop()
-	
-	model.add(Dense(2, activation=None))
-	
-	for layer in model.layers:
-		layer.trainable = True
-	
-	return model
-	
-	
-	
-	#MOBILE NET
-	'''
-	vgg16_model = keras.applications.mobilenet.MobileNet(input_shape=None, alpha=1.0, depth_multiplier=1, dropout=1e-3, include_top=True, weights='imagenet', input_tensor=None, pooling=None, classes=1000)
 
-	model = Sequential()
-	for layer in vgg16_model.layers:
-		model.add(layer)
-	
-	model.layers.pop()
-	#model.layers.pop()
-	#model.layers.pop()
+	conv_base.trainable = True
 
-	model.add(Dense(2, activation=None))
+	set_trainable = False
+	for layer in conv_base.layers:
+		if layer.name == 'block5_conv1':
+			set_trainable = True
+		if set_trainable:
+			layer.trainable = True
+		else:
+			layer.trainable = False
 	
-	for layer in model.layers:
-		layer.trainable = True
-
-	#model.add(Dense(2, activation='linear'))
-	print "length of network"
-	print len(model.layers)
+	
 	model.summary()
+	print "length of the network:"
+	print len(model.layers)
 	return model
 	
-	'''
+	
+	
 def initializeNetwork():
 	from keras.models import load_model
 	import h5py
 
 	#initialize_model = load_model('trained_model.h5')
 	initialize_model = vgg16()
-	initialize_model.load_weights('trained_model_sgd_valid_40k_1-60.h5')
+	initialize_model.load_weights('trained_model_works.h5')
 	return initialize_model
 
 	
@@ -98,6 +90,12 @@ if __name__ == '__main__':
 	import math
 	import cPickle
 	import signal
+	
+	import glob
+	import skimage.io
+	import skimage.exposure
+
+	import matplotlib.pyplot as plt
 
 
 
@@ -132,10 +130,20 @@ if __name__ == '__main__':
 
 		# Unpacking the array from the vector shape
 		imageTmp = np.reshape(array, (imageSize1, imageSize2), order='F')/255.0
+		#imageTmp = np.reshape(array, (imageSize1, imageSize2), order='F')
+		image = np.stack((imageTmp,)*3, -1)
+		
+		'''
 		image = np.zeros((imageSize1, imageSize2, 3), float, 'C')
 		image[:, :, 0] = imageTmp
 		image[:, :, 1] = imageTmp
 		image[:, :, 2] = imageTmp 
+		'''
+		
+		'''
+		image[:, :, 1] = imageTmp
+		image[:, :, 2] = imageTmp 
+		'''
 		
 		start2 = time.clock()
 		#desc = getCNNDescriptor(image, 'conv3')
