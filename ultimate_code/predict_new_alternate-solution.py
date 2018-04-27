@@ -1,3 +1,6 @@
+'''http://marubon-ds.blogspot.fr/2017/08/how-to-make-fine-tuning-model.html
+'''
+
 def vgg16():
 	import keras
 	from keras.models import Sequential
@@ -9,39 +12,32 @@ def vgg16():
 	from keras.layers.convolutional import *
 	import matplotlib.pyplot as plt
 	from keras.utils import plot_model 
-	from keras.applications import VGG16
 	from keras import models
 	from keras import layers
 
 
-	#vgg16_model = keras.applications.vgg16.VGG16(include_top=True, weights='imagenet', input_tensor=None, input_shape=None, pooling=None, classes=1000)
-	conv_base = VGG16(weights='imagenet',
-                  include_top=False,
-                  input_shape=(224, 224, 3))
+	resnet = keras.applications.resnet50.ResNet50(include_top=False, weights='imagenet', input_tensor=None, input_shape=(224,224,3), classes=1000)
 
 	model = models.Sequential()
-	model.add(conv_base)
+	model.add(resnet)
 	model.add(layers.Flatten())
-	model.add(layers.Dense(4096, activation='relu'))
-	model.add(layers.Dense(4096, activation='relu'))
-	model.add(layers.Dense(2, activation=None))
+	model.add(Dense(2, activation=None))
 	
-
-	conv_base.trainable = True
-
-	set_trainable = False
-	for layer in conv_base.layers:
-		if layer.name == 'block5_conv1':
-			set_trainable = True
-		if set_trainable:
-			layer.trainable = True
-		else:
-			layer.trainable = False
 	
+	layer_num = len(resnet.layers)
+	
+	for layer in resnet.layers[:int(layer_num * 0.9)]:
+        	layer.trainable = False
+	model_num = len(model.layers)
+	'''
+	for layer in model.layers[int(model_num * 0.8):]:
+        	layer.trainable = True
+        '''	
 	
 	model.summary()
-	print "length of the network:"
-	print len(model.layers)
+	resnet.summary()
+	print len(resnet.layers)
+	print(layer_num * 0.8)
 	return model
 	
 	
@@ -52,7 +48,7 @@ def initializeNetwork():
 
 	#initialize_model = load_model('trained_model.h5')
 	initialize_model = vgg16()
-	initialize_model.load_weights('trained_model_works.h5')
+	initialize_model.load_weights('trained_model_resnet50_90percent_1-50_adam_001.h5')
 	return initialize_model
 
 	

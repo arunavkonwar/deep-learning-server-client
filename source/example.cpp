@@ -410,7 +410,7 @@ int main()
   //current position
 
   // vpHomogeneousMatrix cTw(0.1,0,1, vpMath::rad(0),vpMath::rad(0),0) ;
-  vpHomogeneousMatrix cTw(0.005,-0.0,1, vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ;
+  vpHomogeneousMatrix cTw(0.01,-0.0,1, vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ;
   sim.setCameraPosition(cTw);
   sim.setCleanPreviousImage(true, vpColor::black); //set color, default is black
   // on recupère l'image I2 //we recover the image I2
@@ -443,7 +443,7 @@ int main()
   double lambda = 0.1 ;
   int iter = 0 ;
   //while (1) //fabs(e.sumSquare()) > 1e-8)
-  while(fabs(e.sumSquare()) > 1e-5)
+  while(fabs(e.sumSquare()) > 1e-4)
   {
 
     sim.setCameraPosition(cTw);
