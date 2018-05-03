@@ -370,7 +370,7 @@ int main()
 
 
   vpImageSimulator sim;
-  sim.setInterpolationType(vpImageSimulator::BILINEAR_INTERPOLATION);
+ // sim.setInterpolationType(vpImageSimulator::BILINEAR_INTERPOLATION);
 
   sim.init(Iimage, X);
 
@@ -410,7 +410,7 @@ int main()
   //current position
 
   // vpHomogeneousMatrix cTw(0.1,0,1, vpMath::rad(0),vpMath::rad(0),0) ;
-  vpHomogeneousMatrix cTw(0.01,-0.0,1, vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ;
+  vpHomogeneousMatrix cTw(0.1, 0.1, 1, vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ;
   sim.setCameraPosition(cTw);
   sim.setCleanPreviousImage(true, vpColor::black); //set color, default is black
   // on recupère l'image I2 //we recover the image I2
@@ -443,14 +443,16 @@ int main()
   double lambda = 0.1 ;
   int iter = 0 ;
   //while (1) //fabs(e.sumSquare()) > 1e-8)
-  while(fabs(e.sumSquare()) > 1e-4)
+  while(fabs(e.sumSquare()) > 1e-8)
   {
 
     sim.setCameraPosition(cTw);
     sim.setCleanPreviousImage(true, vpColor::black); //set color, default is black
     // on recupère l'image I2 //we recover the image I2
     sim.getImage(I,cam);
-    vpImageIo::write(I,"test.jpg") ;
+    //vpImageIo::read("") ;
+    //vpImageIo::read(I,"1000.jpg") ;
+    vpImageIo::write(I,"test.jpg") ;  // .pgm
 
     vpDisplay::display(I) ;
     vpDisplay::flush(I) ;
@@ -477,13 +479,15 @@ int main()
     gt = cdrc ;
     
     cout << "\nfrom GT: \t" << cdrc.t() ;
-    cdrc = getDirectionFromCNN(I) ;                              // ------------------------------------------> 1 
+    cdrc = getDirectionFromCNN(I) ;
+  //  cdrc[0] *=-1 ;
+  //  cdrc[1] *= -1 ;                              // ------------------------------------------> 1 
     
     
 
     cout << "\nfrom CNN:\t" << cdrc.t() ;
     cdTc.buildFrom(cdrc) ;
-
+//exit(1) ;
     // Calcul de l'erreur
     computeError3D(cdTc, e) ;
     // Calcul de la matrice d'interaction

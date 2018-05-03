@@ -16,7 +16,7 @@ def vgg16():
 	from keras import layers
 
 
-	resnet = keras.applications.resnet50.ResNet50(include_top=False, weights='imagenet', input_tensor=None, input_shape=(224,224,3), classes=1000)
+	resnet = keras.applications.resnet50.ResNet50(include_top=False, weights=None, input_tensor=None, input_shape=(224,224,3), classes=1000)
 
 	model = models.Sequential()
 	model.add(resnet)
@@ -48,7 +48,7 @@ def initializeNetwork():
 
 	#initialize_model = load_model('trained_model.h5')
 	initialize_model = vgg16()
-	initialize_model.load_weights('trained_model_resnet50_90percent_1-50_adam_001.h5')
+	initialize_model.load_weights('trained_model_resnet50_90percent_1-100_adam_0001_by255.h5')
 	return initialize_model
 
 	
@@ -92,6 +92,9 @@ if __name__ == '__main__':
 	import skimage.exposure
 
 	import matplotlib.pyplot as plt
+	
+	from PIL import Image
+	import csv
 
 
 
@@ -113,6 +116,8 @@ if __name__ == '__main__':
 		strLength = `arraySize`+'i'
 		
 		array = struct.unpack(strLength, f.read(arraySize*4)) # Reading the actual array
+		#print array
+		
 		
 		print 'Received array size = ', len(array)
 		f.close()
@@ -120,17 +125,30 @@ if __name__ == '__main__':
 		imageSize1 = 224 
     		imageSize2 = 224
     		
-		image = np.zeros((imageSize1, imageSize2, 3), float, 'C')
-		#print image.shape
 		#a=(array[:]).reshape(224,224)
 
 		# Unpacking the array from the vector shape
+		
 		imageTmp = np.reshape(array, (imageSize1, imageSize2), order='F')/255.0
 		#imageTmp = np.reshape(array, (imageSize1, imageSize2), order='F')
+		
+		cv2.imshow('BOSS image',imageTmp)
+		#cv2.waitKey(0)
+		#imageTmp = imageTmp.astype(np.uint8)
+		
+		#imageTmp = skimage.exposure.rescale_intensity(imageTmp * 1.0, out_range=np.float32)
+		im = Image.fromarray(imageTmp)
+		#im.show()
+		print(np.isfortran(imageTmp))
+		
+		#
+		#print(image.shape)
+		
+		
+		image = np.zeros((imageSize1, imageSize2, 3), float, 'C')
 		image = np.stack((imageTmp,)*3, -1)
 		
 		'''
-		image = np.zeros((imageSize1, imageSize2, 3), float, 'C')
 		image[:, :, 0] = imageTmp
 		image[:, :, 1] = imageTmp
 		image[:, :, 2] = imageTmp 
