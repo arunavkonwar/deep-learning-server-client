@@ -258,7 +258,7 @@ cout << "  Time elapsed Client Total = " << elapsed*1000 << "ms";
 //cout << "Vector result = " << endl;
 vector<double> resultVector(6);
 for(int i = 0 ; i < 6 ; i++){
-if(i < 2) //update this to 6 incase of all axis
+if(i == 0 || i == 1 || i == 2 || i == 5) //update this to 6 incase of all axis
 resultVector[i] = resultArray[i]; // Scaling from [mm] to [m]
 else
 //resultVector[i] = resultArray[i];
@@ -410,7 +410,7 @@ int main()
   //current position
 
   // vpHomogeneousMatrix cTw(0.1,0,1, vpMath::rad(0),vpMath::rad(0),0) ;
-  vpHomogeneousMatrix cTw(0.1, 0.1, 1, vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ;
+  vpHomogeneousMatrix cTw(0.1, 0.1, 1.2, vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ;
   sim.setCameraPosition(cTw);
   sim.setCleanPreviousImage(true, vpColor::black); //set color, default is black
   // on recupère l'image I2 //we recover the image I2

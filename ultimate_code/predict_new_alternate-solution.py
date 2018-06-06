@@ -16,12 +16,16 @@ def vgg16():
 	from keras import layers
 
 
-	resnet = keras.applications.resnet50.ResNet50(include_top=False, weights=None, input_tensor=None, input_shape=(224,224,3), classes=1000)
+	resnet = keras.applications.resnet50.ResNet50(include_top=False, weights='imagenet', input_tensor=None, input_shape=(224,224,3), classes=1000)
 
 	model = models.Sequential()
 	model.add(resnet)
 	model.add(layers.Flatten())
-	model.add(Dense(2, activation=None))
+	#for 2 axis
+	#model.add(Dense(2, activation=None))
+	#for 3 axis
+	model.add(Dense(4, activation=None))
+	#model.add(Dense(4, activation=None))
 	
 	
 	layer_num = len(resnet.layers)
@@ -48,7 +52,7 @@ def initializeNetwork():
 
 	#initialize_model = load_model('trained_model.h5')
 	initialize_model = vgg16()
-	initialize_model.load_weights('trained_model_resnet50_90percent_1-100_adam_0001_by255.h5')
+	initialize_model.load_weights('trained_model_resnet50_90percent_1-100_adam_0001_4DOF.h5')
 	return initialize_model
 
 	
