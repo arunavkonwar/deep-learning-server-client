@@ -24,7 +24,7 @@ def vgg16():
 	#for 2 axis
 	#model.add(Dense(2, activation=None))
 	#for 3 axis
-	model.add(Dense(4, activation=None))
+	model.add(Dense(3, activation=None))
 	#model.add(Dense(4, activation=None))
 	
 	
@@ -52,7 +52,7 @@ def initializeNetwork():
 
 	#initialize_model = load_model('trained_model.h5')
 	initialize_model = vgg16()
-	initialize_model.load_weights('trained_model_resnet50_90percent_1-100_adam_0001_4DOF.h5')
+	initialize_model.load_weights('trained_model_resnet50_90percent_1-150_adam_0001_velocity_hd.h5')
 	return initialize_model
 
 	

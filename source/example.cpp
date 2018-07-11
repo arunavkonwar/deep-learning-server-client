@@ -258,11 +258,12 @@ cout << "  Time elapsed Client Total = " << elapsed*1000 << "ms";
 //cout << "Vector result = " << endl;
 vector<double> resultVector(6);
 for(int i = 0 ; i < 6 ; i++){
-if(i == 0 || i == 1 || i == 2 || i == 5) //update this to 6 incase of all axis
+if(i == 0 || i == 1 || i == 2) //update this to 6 incase of all axis
 resultVector[i] = resultArray[i]; // Scaling from [mm] to [m]
 else
 //resultVector[i] = resultArray[i];
-resultVector[i] = 0; 
+resultVector[i] = resultArray[i]; 
+//resultVector[i] = 0; 
 //cout << "====" << endl;
 //cout <<  resultArray[i] << endl;
 //cout <<  resultVector[i] << endl;
@@ -410,7 +411,7 @@ int main()
   //current position
 
   // vpHomogeneousMatrix cTw(0.1,0,1, vpMath::rad(0),vpMath::rad(0),0) ;
-  vpHomogeneousMatrix cTw(0.1, 0.1, 1.2, vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ;
+  vpHomogeneousMatrix cTw(0.009, 0.009, 1, vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ;
   sim.setCameraPosition(cTw);
   sim.setCleanPreviousImage(true, vpColor::black); //set color, default is black
   // on recupère l'image I2 //we recover the image I2
@@ -449,10 +450,10 @@ int main()
     sim.setCameraPosition(cTw);
     sim.setCleanPreviousImage(true, vpColor::black); //set color, default is black
     // on recupère l'image I2 //we recover the image I2
+    
     sim.getImage(I,cam);
-    //vpImageIo::read("") ;
     //vpImageIo::read(I,"1000.jpg") ;
-    vpImageIo::write(I,"test.jpg") ;  // .pgm
+    //vpImageIo::write(I,"test.jpg") ;  // .pgm
 
     vpDisplay::display(I) ;
     vpDisplay::flush(I) ;
@@ -478,14 +479,7 @@ int main()
     vpColVector gt ;
     gt = cdrc ;
     
-    cout << "\nfrom GT: \t" << cdrc.t() ;
-    cdrc = getDirectionFromCNN(I) ;
-  //  cdrc[0] *=-1 ;
-  //  cdrc[1] *= -1 ;                              // ------------------------------------------> 1 
-    
-    
-
-    cout << "\nfrom CNN:\t" << cdrc.t() ;
+    //cout << "\nfrom GT: \t" << cdrc.t() ;
     cdTc.buildFrom(cdrc) ;
 //exit(1) ;
     // Calcul de l'erreur
@@ -497,6 +491,19 @@ int main()
     Lp = Lx.pseudoInverse() ;
 
     v = - lambda * Lp * e ;
+    
+    cout << "\nGT VELOCITY:\t" << v.t();
+    
+    v = getDirectionFromCNN(I) ;
+  //  cdrc[0] *=-1 ;
+  //  cdrc[1] *= -1 ;                              // ------------------------------------------> 1 
+    
+    
+
+    //cout << "\nCNN VELOCITY:\t" << cdrc.t() ;
+    cout << "\nCNN VELOCITY:\t" << v.t() ;
+    
+    
 
     // Mis à jour de la position de la camera
     cTw = vpExponentialMap::direct(v).inverse()* cTw ;
@@ -505,8 +512,8 @@ int main()
 
     iter++ ;
 
-e[2] =gt[0] ; 
-e[3] = gt[1] ;
+	e[2] =gt[0] ; 
+	e[3] = gt[1] ;
 
 
     //mis a jour de courbes
