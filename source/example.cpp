@@ -322,6 +322,12 @@ int main()
   plot.setTitle(3, title);
   plot.initGraph(3,6);
 
+plot.setLegend(3,0,"x") ;
+plot.setLegend(3,1,"y") ;
+plot.setLegend(3,2,"z") ;
+plot.setLegend(3,3,"rx") ;
+plot.setLegend(3,4,"ry") ;
+plot.setLegend(3,5,"rz") ;
 
   cv::Mat mat_img; //initialize MAT variables
 
@@ -411,7 +417,7 @@ int main()
   //current position
 
   // vpHomogeneousMatrix cTw(0.1,0,1, vpMath::rad(0),vpMath::rad(0),0) ;
-  vpHomogeneousMatrix cTw(0.009, 0.009, 1, vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ;
+  vpHomogeneousMatrix cTw(0.01, 0.01, 1.01, vpMath::rad(10),vpMath::rad(10),vpMath::rad(10)) ;
   sim.setCameraPosition(cTw);
   sim.setCleanPreviousImage(true, vpColor::black); //set color, default is black
   // on recupère l'image I2 //we recover the image I2
@@ -444,16 +450,14 @@ int main()
   double lambda = 0.1 ;
   int iter = 0 ;
   //while (1) //fabs(e.sumSquare()) > 1e-8)
-  while(fabs(e.sumSquare()) > 1e-8)
+  while(fabs(e.sumSquare()) > 1e-12)
   {
 
     sim.setCameraPosition(cTw);
     sim.setCleanPreviousImage(true, vpColor::black); //set color, default is black
     // on recupère l'image I2 //we recover the image I2
-    
     sim.getImage(I,cam);
-    //vpImageIo::read(I,"1000.jpg") ;
-    //vpImageIo::write(I,"test.jpg") ;  // .pgm
+    vpImageIo::write(I,"test.jpg") ;
 
     vpDisplay::display(I) ;
     vpDisplay::flush(I) ;
@@ -479,9 +483,14 @@ int main()
     vpColVector gt ;
     gt = cdrc ;
     
-    //cout << "\nfrom GT: \t" << cdrc.t() ;
+    cout << "\nfrom GT: \t" << cdrc.t() ;
+    cdrc = getDirectionFromCNN(I) ;                              // ------------------------------------------> 1 
+    
+    
+
+    cout << "\nfrom CNN:\t" << cdrc.t() ;
     cdTc.buildFrom(cdrc) ;
-//exit(1) ;
+
     // Calcul de l'erreur
     computeError3D(cdTc, e) ;
     // Calcul de la matrice d'interaction
@@ -491,40 +500,27 @@ int main()
     Lp = Lx.pseudoInverse() ;
 
     v = - lambda * Lp * e ;
-    
-    cout << "\nGT VELOCITY:\t" << v.t();
-    
-    v = getDirectionFromCNN(I) ;
-  //  cdrc[0] *=-1 ;
-  //  cdrc[1] *= -1 ;                              // ------------------------------------------> 1 
-    
-    
-
-    //cout << "\nCNN VELOCITY:\t" << cdrc.t() ;
-    cout << "\nCNN VELOCITY:\t" << v.t() ;
-    
-    
 
     // Mis à jour de la position de la camera
     cTw = vpExponentialMap::direct(v).inverse()* cTw ;
 
-    cout << "\n\niter "<< iter <<" : "<< e.t() << endl ;
+    //mis a jour de courbes
+    vpPoseVector crw(cTw) ;
+    
+    cout << "\n\niter "<< iter <<" : "<< e.t() <<"  " << crw.t() << endl ;
 
     iter++ ;
 
-	e[2] =gt[0] ; 
-	e[3] = gt[1] ;
+//e[2] =gt[0] ; 
+//e[3] = gt[1] ;
 
 
-    //mis a jour de courbes
-    vpPoseVector crw(cTw) ;
-    crw[2] = 0 ;
+  //  crw[2] = 0 ;
     
     plot.plot(0,0,iter, e.sumSquare()) ;
     plot.plot(1,iter, e) ;
     plot.plot(2,iter, v) ;
     plot.plot(3,iter,crw) ;
-
 
   }
 
