@@ -351,27 +351,27 @@ if __name__ == '__main__':
 
 
 	model = initializeNetwork()
-	print "/nModel initialized..."
+	print ("/nModel initialized...")
 	#img_1 = cv2.resize(img, dsize=(224, 224), interpolation=cv2.INTER_CUBIC)
 
 	file1Path = "/dev/shm/fifo_server"
 	file2Path = "/dev/shm/fifo_client"
 
-	print "Server Waiting for Client to connect "
+	print ("Server Waiting for Client to connect ")
 	
 	while(1):
-		print 'Handshake...'
+		print ('Handshake...')
 		f = open(file1Path, 'r')
 	
 		arraySize = struct.unpack('i', f.read(4))[0] # Reading array size
-		print 'Received int = ', arraySize
+		print ('Received int = ', arraySize)
 		strLength = `arraySize`+'i'
 		
 		array = struct.unpack(strLength, f.read(arraySize*4)) # Reading the actual array
 		#print array
 		
 		
-		print 'Received array size = ', len(array)
+		print ('Received array size = ', len(array))
 		f.close()
 		
 		imageSize1 = 224 
@@ -425,27 +425,27 @@ if __name__ == '__main__':
 		
 		yup = prediction[0]
 		arraySize = yup.shape[0]
-		print "shape:"
-		print arraySize
+		print ("shape:")
+		print (arraySize)
 		
-		print 'Sending data back ; ArraySize'
+		print ('Sending data back ; ArraySize')
 		wp = open(file2Path, 'w')
 		wp.write(struct.pack('>i',arraySize))
 		
-		print 'Sending data back ; FLOAT_Array'
+		print ('Sending data back ; FLOAT_Array')
 		#wp = open(file2Path, 'w')
 		packed = struct.pack('<'+`arraySize`+'f', *yup)
 		#print 'sending = ' + `packed`
 		wp.write(packed)
 		wp.close()
 		
-		print 'Array Sent'
+		print ('Array Sent')
 
 		end1 = time.clock()
 		
 		#print 'Elapsed server time total = ' + `elapsed1` + 'ms'
 		#print 'Elapsed time descriptor computation = ' + `elapsed2` + 'ms\n'
-		print 'Ending handshake.' 
+		print ('Ending handshake.')
 		'''
 		while(True):
 			try:
@@ -454,5 +454,3 @@ if __name__ == '__main__':
 				print exc
 				
 		'''
-		
-		
