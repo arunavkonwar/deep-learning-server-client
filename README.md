@@ -2,6 +2,8 @@
 
 ![alt text](https://www.inria.fr/var/inria/storage/images/medias/inria/images-corps/logo-inria-institutionnel-couleur/422541-6-eng-GB/logo-inria-institutionnel-couleur_large.png)
 
+This repository was created at INRIA, France as part of the efforts to make communication between the C++ code for the visual servoing using ViSP and the deep learning model in python easier. The code leverages the power of the pipe functionality in the Unix computers and enables codes written in different languages to communicate with each other.
+
 Files:
 - callPythonServer.cpp: Contains the functions with which I communicate in C ++ with the python code of the cnn.
 
