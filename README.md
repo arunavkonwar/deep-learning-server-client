@@ -1,5 +1,7 @@
 # Deep Learning Server Client
 
+![alt text](https://www.inria.fr/var/inria/storage/images/medias/inria/images-corps/logo-inria-institutionnel-couleur/422541-6-eng-GB/logo-inria-institutionnel-couleur_large.png)
+
 Files:
 - callPythonServer.cpp: Contains the functions with which I communicate in C ++ with the python code of the cnn.
 
